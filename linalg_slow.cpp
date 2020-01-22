@@ -80,3 +80,7 @@ const double& Vector::operator[](int i) const {
 		throw;
 	return vec[i];
 }
+
+Vector operator*(double d, const Vector& v) {
+	return v * d;
+}

@@ -1,9 +1,13 @@
 #pragma once
 
+class Vector;
+class Matrix;
+
 class Vector {
 private:
 	int size;
 	double *vec;
+	friend Matrix;
 public:
 	Vector();
 	Vector(int size);
@@ -22,4 +26,31 @@ public:
 	const double& operator[](int i) const;
 
 	const int &N = size;
+};
+Vector operator*(double d, const Vector& v);
+
+class Matrix {
+private:
+	Vector *mat;
+	int size;
+	int vecSize;
+public:
+	Matrix();
+	Matrix(int rows, int cols);
+	Matrix(const Matrix& m);
+	Matrix(Matrix&& m);
+	~Matrix();
+
+	Vector operator*(const Vector& v) const;
+	Matrix operator*(double d) const;
+	Matrix& operator*=(double d);
+
+	Matrix operator+(const Matrix& m) const;
+	Matrix& operator+=(const Matrix& m);
+
+	Vector& operator[](int i);
+	const Vector& operator[](int i) const;
+
+	const int &M = size;
+	const int &N = vecSize;
 };
