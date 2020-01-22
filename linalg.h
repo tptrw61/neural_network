@@ -7,13 +7,15 @@ class Vector {
 private:
 	int size;
 	double *vec;
-	friend Matrix;
 public:
 	Vector();
 	Vector(int size);
 	Vector(const Vector& vec);
 	Vector(Vector&& vec);
 	~Vector();
+
+	Vector& operator=(const Vector& v);
+	Vector& operator=(Vector&& v);
 
 	double operator*(const Vector& vec) const;
 	Vector operator*(double s) const;
@@ -41,6 +43,9 @@ public:
 	Matrix(Matrix&& m);
 	~Matrix();
 
+	Matrix& operator=(const Matrix& m);
+	Matrix& operator=(Matrix&& m);
+
 	Vector operator*(const Vector& v) const;
 	Matrix operator*(double d) const;
 	Matrix& operator*=(double d);
@@ -54,3 +59,4 @@ public:
 	const int &M = size;
 	const int &N = vecSize;
 };
+Matrix operator*(double d, const Matrix& m);
