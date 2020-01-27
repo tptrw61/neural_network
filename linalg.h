@@ -33,9 +33,9 @@ Vector operator*(double d, const Vector& v);
 
 class Matrix {
 private:
-	Vector *mat;
-	int size;
-	int vecSize;
+	double *mat;
+	int rows;
+	int cols;
 public:
 	Matrix();
 	Matrix(int rows, int cols);
@@ -53,10 +53,10 @@ public:
 	Matrix operator+(const Matrix& m) const;
 	Matrix& operator+=(const Matrix& m);
 
-	Vector& operator[](int i);
-	const Vector& operator[](int i) const;
+	double& operator()(int r, int c);
+	const double& operator()(int r, int c) const;
 
-	const int &M = size;
-	const int &N = vecSize;
+	const int &M = rows;
+	const int &N = cols;
 };
 Matrix operator*(double d, const Matrix& m);

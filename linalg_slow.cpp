@@ -47,6 +47,7 @@ Vector& Vector::operator=(const Vector& v) {
 		for (int i = 0; i < N; i++)
 			vec[i] = v.vec[i];
 	}
+	return *this;
 }
 
 Vector& Vector::operator=(Vector&& v) {
@@ -58,6 +59,7 @@ Vector& Vector::operator=(Vector&& v) {
 	vec = v.vec;
 	v.size = 0;
 	v.vec = nullptr;
+	return *this;
 }
 
 double Vector::operator*(const Vector& v) const {
@@ -117,7 +119,7 @@ Vector operator*(double d, const Vector& v) {
 
 
 Matrix::Matrix() {
-	size = vecSize = 0;
+	rows = cols = 0;
 	mat = nullptr;
 }
 
@@ -126,23 +128,21 @@ Matrix::Matrix(int rows, int cols) {
 		throw;
 
 	if (rows > 0 && cols > 0) {
-		mat = new Vector[rows];
-		size = rows;
-		vecSize = cols;
-		for(int i = 0; i < size; i++)
-			mat[i] = Vector(vecSize);
+		mat = new double[rows * cols];
+		this->rows = rows;
+		this->cols = cols;
 	} else {
 		mat = nullptr;
-		size = vecSize = 0;
+		rows = cols = 0;
 	}
 }
 
 Matrix::Matrix(const Matrix& m) {
-	size = m.M;
-	vecSize = m.N;
+	rows = m.M;
+	cols = m.N;
 	if (M > 0 && N > 0) {
-		mat = new Vector[M];
-		for (int i = 0; i < M; i++)
+		mat = new double[rows * cols];
+		for (int i = 0; i < rows * cols; i++)
 			mat[i] = m.mat[i];
 	} else {
 		mat = nullptr;
@@ -150,10 +150,10 @@ Matrix::Matrix(const Matrix& m) {
 }
 
 Matrix::Matrix(Matrix&& m) {
-	size = m.size;
-	vecSize = m.vecSize;
+	rows = m.rows;
+	cols = m.cols;
 	mat = m.mat;
-	m.size = m.vecSize = 0;
+	m.rows = m.cols = 0;
 	m.mat = nullptr;
 }
 
@@ -162,53 +162,58 @@ Matrix::~Matrix() {
 }
 
 Matrix& Matrix::operator=(const Matrix& m) {
-	if (size != 0) {
-		size = vecSize = 0;
+	if (rows != 0) {
+		rows = cols = 0;
 		delete[] mat;
 		mat = nullptr;
 	}
-	size = m.M;
-	vecSize = m.N;
+	rows = m.M;
+	cols = m.N;
 	if (M > 0 && N > 0) {
-		mat = new Vector[M];
-		for (int i = 0; i < M; i++)
+		mat = new double[rows * cols];
+		for (int i = 0; i < rows * cols; i++)
 			mat[i] = m.mat[i];
 	} else {
 		mat = nullptr;
 	}
+	return *this;
 }
 
 Matrix& Matrix::operator=(Matrix&& m) {
-	if (size != 0) {
-		size = vecSize = 0;
+	if (rows != 0) {
+		rows = cols = 0;
 		delete[] mat;
 		mat = nullptr;
 	}
-	size = m.size;
-	vecSize = m.vecSize;
+	rows = m.rows;
+	cols = m.cols;
 	mat = m.mat;
-	m.size = m.vecSize = 0;
+	m.rows = m.cols = 0;
 	m.mat = nullptr;
+	return *this;
 }
 
 Vector Matrix::operator*(const Vector& v) const {
 	if (N != v.N)
 		throw;
 	Vector o(M);
-	for(int i = 0; i < N; i++)
-		o[i] = v * mat[i];
+	for(int i = 0; i < M; i++) {
+		o[i] = 0;
+		for (int j = 0; j < N; j++)
+			o[i] += v[j] * mat[i*N + j];
+	}
 	return o;
 }
 
 Matrix Matrix::operator*(double d) const {
 	Matrix a(M, N);
-	for (int i = 0; i < M; i++)
+	for (int i = 0; i < M * N; i++)
 		a.mat[i] = mat[i] * d;
 	return a;
 }
 
 Matrix& Matrix::operator*=(double d) {
-	for (int i = 0; i < M; i++)
+	for (int i = 0; i < M * N; i++)
 		mat[i] *= d;
 	return *this;
 }
@@ -217,7 +222,7 @@ Matrix Matrix::operator+(const Matrix& m) const {
 	if (M != m.M || N != m.N)
 		throw;
 	Matrix a(M, N);
-	for (int i = 0; i < M; i++)
+	for (int i = 0; i < M * N; i++)
 		a.mat[i] = mat[i] + m.mat[i];
 	return a;
 }
@@ -225,21 +230,21 @@ Matrix Matrix::operator+(const Matrix& m) const {
 Matrix& Matrix::operator+=(const Matrix& m) {
 	if (M != m.M || N != m.N)
 		throw;
-	for (int i = 0; i < M; i++)
+	for (int i = 0; i < M * N; i++)
 		mat[i] += m.mat[i];
 	return *this;
 }
 
-Vector& Matrix::operator[](int i) {
-	if (i < 0 || i >= M)
+double& Matrix::operator()(int r, int c) {
+	if (r < 0 || r >= M || c < 0 || c >= N)
 		throw;
-	return mat[i];
+	return mat[r*N + c];
 }
 
-const Vector& Matrix::operator[](int i) const {
-	if (i < 0 || i >= M)
+const double& Matrix::operator()(int r, int c) const {
+	if (r < 0 || r >= M || c < 0 || c >= N)
 		throw;
-	return mat[i];
+	return mat[r*N + c];
 }
 
 Matrix operator*(double d, const Matrix& m) {
