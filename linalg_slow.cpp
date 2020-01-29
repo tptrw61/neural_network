@@ -344,6 +344,14 @@ const double& Matrix::operator()(int r, int c) const {
 	return mat[r*N + c];
 }
 
+Matrix Matrix::transpose() const {
+	Matrix m(N, M);
+	for (int i = 0; i < M; i++)
+		for (int j = 0; j < N; j++)
+			m.mat[j*m.N + i] = mat[i*N + j];
+	return m;
+}
+
 Matrix operator*(double d, const Matrix& m) {
 	return m * d;
 }

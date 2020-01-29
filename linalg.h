@@ -86,6 +86,8 @@ public:
 	double& operator()(int r, int c);
 	const double& operator()(int r, int c) const;
 
+	Matrix transpose() const;
+
 	const int &M = rows;
 	const int &N = cols;
 };
