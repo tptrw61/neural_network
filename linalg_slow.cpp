@@ -16,6 +16,19 @@ Vector::Vector(int size) {
 		vec = new double[size];
 }
 
+Vector::Vector(int size, double filld) {
+	if (size < 0)
+		throw;
+	this->size = size;
+	if (size == 0)
+		vec = nullptr;
+	else {
+		vec = new double[size];
+		for (int i = 0; i < size; i++)
+			vec[i] = filld;
+	}
+}
+
 Vector::Vector(const Vector& v) {
 	size = v.size;
 	vec = new double[size];
@@ -101,6 +114,30 @@ Vector& Vector::operator+=(const Vector& v) {
 	return *this;
 }
 
+Vector Vector::operator-(const Vector& v) const {
+	if (N != v.N)
+		throw;
+	Vector o(N);
+	for (int i = 0; i < N; i++)
+		o.vec[i] = vec[i] - v.vec[i];
+	return o;
+}
+
+Vector& Vector::operator-=(const Vector& v) {
+	if (N != v.N)
+		throw;
+	for (int i = 0; i < N; i++)
+		vec[i] -= v.vec[i];
+	return *this;
+}
+
+Vector Vector::operator-() const {
+	Vector v(N);
+	for (int i = 0; i < N; i++)
+		v.vec[i] = -vec[i];
+	return v;
+}
+
 double& Vector::operator[](int i) {
 	if (i < 0 || i >= N)
 		throw;
@@ -112,6 +149,38 @@ const double& Vector::operator[](int i) const {
 		throw;
 	return vec[i];
 }
+
+double Vector::sum() const {
+	double s = 0;
+	for (int i = 0; i < N; i++)
+		s += vec[i];
+	return s;
+}
+
+Vector Vector::applyFunc(VecFuncObj& func) const {
+	Vector v(N);
+	for (int i = 0; i < v.N; i++)
+		v.vec[i] = func(vec[i]);
+	return v;
+}
+
+Vector Vector::applyFunc(VecFuncObj& func, const Vector& v) const {
+	if (N != v.N)
+		throw;
+	Vector o(N);
+	for (int i = 0; i < o.N; i++)
+		o.vec[i] = func(vec[i], v.vec[i]);
+	return o;
+}
+Vector Vector::applyFunc(double (*f)(double)) const {
+	VecFuncObj fo(f);
+	return applyFunc(fo);
+}
+Vector Vector::applyFunc(double (*f)(double, double), const Vector& v) const {
+	VecFuncObj fo(f);
+	return applyFunc(fo, v);
+}
+
 
 Vector operator*(double d, const Vector& v) {
 	return v * d;
@@ -233,6 +302,30 @@ Matrix& Matrix::operator+=(const Matrix& m) {
 	for (int i = 0; i < M * N; i++)
 		mat[i] += m.mat[i];
 	return *this;
+}
+
+Matrix Matrix::operator-(const Matrix& m) const {
+	if (M != m.M || N != m.N)
+		throw;
+	Matrix a(M, N);
+	for (int i = 0; i < M * N; i++)
+		a.mat[i] = mat[i] - m.mat[i];
+	return a;
+}
+
+Matrix& Matrix::operator-=(const Matrix& m) {
+	if (M != m.M || N != m.N)
+		throw;
+	for (int i = 0; i < M * N; i++)
+		mat[i] -= m.mat[i];
+	return *this;
+}
+
+Matrix Matrix::operator-() const {
+	Matrix m(M, N);
+	for (int i = 0; i < M * N; i++)
+		m.mat[i] = -mat[i];
+	return m;
 }
 
 double& Matrix::operator()(int r, int c) {

@@ -2,6 +2,23 @@
 
 class Vector;
 class Matrix;
+class VecFuncObj;
+
+class VecFuncObj {
+private:
+	double (*d1)(double) = [](double d) -> double { return d; };
+	double (*d2)(double, double) = [](double a, double b) -> double { return a; };
+
+	double (*f1)(double) = d1;
+	double (*f2)(double, double) = d2;
+public:
+	VecFuncObj(double (*f)(double)) : f1(f) {}
+	VecFuncObj(double (*f)(double,double)) : f2(f) {}
+	VecFuncObj(double (*fa)(double), double (*fb)(double, double)) :
+		f1(fa), f2(fb) {}
+	virtual double operator()(double d) { return f1(d); }
+	virtual double operator()(double a, double b) { return f2(a, b); }
+};
 
 class Vector {
 private:
@@ -10,6 +27,7 @@ private:
 public:
 	Vector();
 	Vector(int size);
+	Vector(int size, double filld);
 	Vector(const Vector& vec);
 	Vector(Vector&& vec);
 	~Vector();
@@ -23,9 +41,18 @@ public:
 
 	Vector operator+(const Vector& vec) const;
 	Vector& operator+=(const Vector& vec);
+	Vector operator-(const Vector& vec) const;
+	Vector& operator-=(const Vector& vec);
+	Vector operator-() const;
 
 	double& operator[](int i);
 	const double& operator[](int i) const;
+
+	double sum() const;
+	Vector applyFunc(VecFuncObj& elWiseFunc) const;
+	Vector applyFunc(VecFuncObj& elWiseFunc, const Vector& v) const;
+	Vector applyFunc(double (*f)(double)) const;
+	Vector applyFunc(double (*f)(double, double), const Vector& v) const;
 
 	const int &N = size;
 };
@@ -52,6 +79,9 @@ public:
 
 	Matrix operator+(const Matrix& m) const;
 	Matrix& operator+=(const Matrix& m);
+	Matrix operator-(const Matrix& m) const;
+	Matrix& operator-=(const Matrix& m);
+	Matrix operator-() const;
 
 	double& operator()(int r, int c);
 	const double& operator()(int r, int c) const;
