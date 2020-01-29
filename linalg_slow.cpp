@@ -49,14 +49,16 @@ Vector::~Vector() {
 }
 
 Vector& Vector::operator=(const Vector& v) {
-	if (size != 0) {
+	bool same = N == v.N;
+	if (size != 0 && !same) {
 		size = 0;
 		delete[] vec;
 		vec = nullptr;
 	}
 	if (v.N != 0) {
 		size = v.N;
-		vec = new double[size];
+		if (!same)
+			vec = new double[size];
 		for (int i = 0; i < N; i++)
 			vec[i] = v.vec[i];
 	}
@@ -231,7 +233,8 @@ Matrix::~Matrix() {
 }
 
 Matrix& Matrix::operator=(const Matrix& m) {
-	if (rows != 0) {
+	bool same = M*N == m.M*m.N;
+	if (rows != 0 && !same) {
 		rows = cols = 0;
 		delete[] mat;
 		mat = nullptr;
@@ -239,7 +242,8 @@ Matrix& Matrix::operator=(const Matrix& m) {
 	rows = m.M;
 	cols = m.N;
 	if (M > 0 && N > 0) {
-		mat = new double[rows * cols];
+		if (!same)
+			mat = new double[rows * cols];
 		for (int i = 0; i < rows * cols; i++)
 			mat[i] = m.mat[i];
 	} else {
