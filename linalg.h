@@ -50,9 +50,9 @@ public:
 
 	double sum() const;
 	Vector applyFunc(VecFuncObj& elWiseFunc) const;
-	Vector applyFunc(VecFuncObj& elWiseFunc, const Vector& v) const;
+	Vector applyFunc(const Vector& v, VecFuncObj& elWiseFunc) const;
 	Vector applyFunc(double (*f)(double)) const;
-	Vector applyFunc(double (*f)(double, double), const Vector& v) const;
+	Vector applyFunc(const Vector& v, double (*f)(double, double)) const;
 
 	const int &N = size;
 };

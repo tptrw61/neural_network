@@ -166,7 +166,7 @@ Vector Vector::applyFunc(VecFuncObj& func) const {
 	return v;
 }
 
-Vector Vector::applyFunc(VecFuncObj& func, const Vector& v) const {
+Vector Vector::applyFunc(const Vector& v, VecFuncObj& func) const {
 	if (N != v.N)
 		throw;
 	Vector o(N);
@@ -178,9 +178,9 @@ Vector Vector::applyFunc(double (*f)(double)) const {
 	VecFuncObj fo(f);
 	return applyFunc(fo);
 }
-Vector Vector::applyFunc(double (*f)(double, double), const Vector& v) const {
+Vector Vector::applyFunc(const Vector& v, double (*f)(double, double)) const {
 	VecFuncObj fo(f);
-	return applyFunc(fo, v);
+	return applyFunc(v, fo);
 }
 
 
