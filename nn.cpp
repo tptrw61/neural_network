@@ -85,7 +85,7 @@ int NeuralNetwork::hiddenLayerCount() {
 }
 
 int NeuralNetwork::getLayerSize(int l) {
-	if (l < 0 || l >= layerSize.size())
+	if (l < 0 || l >= (int)layerSize.size())
 		throw;
 	return layerSize[l];
 }
@@ -182,4 +182,5 @@ std::tuple<int, int, Vector> NeuralNetwork::trainBatch(const std::vector<std::pa
 	std::get<0>(rv) = passed;
 	std::get<1>(rv) = tested;
 	std::get<2>(rv) = costs * (1.0 / tested);
+	return rv;
 }

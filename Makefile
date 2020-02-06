@@ -1,5 +1,8 @@
 
-CXXFLAGS:=-Wall
+CXXFLAGS:=-Wall -g
+
+nn.o: nn.cpp nn.h linalg.o linalg.h
+	g++ -c $(CXXFLAGS) -o $@ $<
 
 linalg.o: linalg_slow.cpp linalg.h
 	g++ -c $(CXXFLAGS) -o $@ $<
