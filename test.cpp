@@ -82,7 +82,7 @@ int main() {
 		std::pair<Vector, Vector> p(vi, vo);
 		batch.push_back(p);
 	}
-	NeuralNetwork nn(3, 8, 4, 1);
+	NeuralNetwork nn(4, 8, 4, 4, 1);
 	auto res = nn.trainBatch(batch);
 	int passed = std::get<0>(res);
 	int tested = std::get<1>(res);

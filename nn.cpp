@@ -16,7 +16,7 @@ static double cost(double y, double a) {
 }
 
 NeuralNetwork::NeuralNetwork(int layers, ...) {
-	if (layers <= 3)
+	if (layers < 3)
 		throw;
 	va_list args;
 	va_start(args, layers);
@@ -45,7 +45,7 @@ NeuralNetwork::NeuralNetwork(int layers, ...) {
 	//more...
 }
 NeuralNetwork::NeuralNetwork(std::vector<int> layers) {
-	if (layers.size() <= 3)
+	if (layers.size() < 3)
 		throw;
 
 	layerSize = layers;
@@ -145,6 +145,7 @@ std::tuple<int, int, Vector> NeuralNetwork::trainBatch(const std::vector<std::pa
 			tested++;
 		//forward prop saving activaions
 		std::vector<Vector> a, z;
+
 		for (int i = 0; i < (int)W.size(); i++) {
 			v = (W[i] * v) + B[i];
 			z.push_back(v);
@@ -161,7 +162,10 @@ std::tuple<int, int, Vector> NeuralNetwork::trainBatch(const std::vector<std::pa
 		dB.back() = dz.back();
 		for (int i = a.size() - 2; i >= 0; i--) {
 			dz[i] = z[i].applyFunc(W[i+1].transpose()*dz[i+1], dzfunc);
-			dW[i] = outerProduct(dz[i], a[i - 1]);
+			if (i == 0)
+				dW[i] = outerProduct(dz[i], batch[ix].first);
+			else
+				dW[i] = outerProduct(dz[i], a[i - 1]);
 			dB[i] = dz[i];
 		}
 		//update network
